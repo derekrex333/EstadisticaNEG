@@ -1,0 +1,124 @@
+<!DOCTYPE html><html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bonos basura y banca, 2010-2025</title>
+<style>
+:root{--out:cubic-bezier(.23,1,.32,1)}
+*{box-sizing:border-box}html,body{margin:0;height:100%}
+body{font-family:"Segoe UI",system-ui,sans-serif;background:#0e1a24}
+main{height:100%;overflow-y:auto;scroll-snap-type:y mandatory}
+section{min-height:100vh;scroll-snap-align:start;padding:8vh 6vw;display:flex;flex-direction:column;justify-content:center;gap:4vh;background:var(--bg);color:var(--ink)}
+.d{--bg:#0e1a24;--ink:#eaf0f3;--mut:#93a6b3;--acc:#f2b134;--surf:#162733}
+.l{--bg:#e8edef;--ink:#0e1a24;--mut:#4a5b67;--acc:#9a5b00;--surf:#d8e0e4}
+h1,h2,.big{font-family:Georgia,"Iowan Old Style",serif;font-weight:400;margin:0;letter-spacing:-.035em;line-height:.95}
+h1{font-size:clamp(3rem,7.4vw,7rem)}h2{font-size:clamp(2.4rem,5vw,4.6rem)}
+.big{font-size:clamp(5rem,15vw,13rem);color:var(--acc)}
+p{font-size:clamp(1.15rem,1.7vw,1.5rem);line-height:1.45;margin:0;max-width:30em}
+b{color:var(--acc);font-weight:600}.mut{color:var(--mut)}
+.g{display:grid;grid-template-columns:1fr 1fr;gap:6vw;align-items:center}
+.g.w{grid-template-columns:1.7fr 1fr}.g>div{display:flex;flex-direction:column;gap:2.4vh}
+canvas{width:100%;height:52vh;min-height:260px;background:var(--surf);display:block}
+svg{width:100%;height:auto;display:block}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:6vw}.two>div{display:flex;flex-direction:column;gap:1.6vh}
+.two .big{font-size:clamp(3.4rem,9vw,8rem)}
+.s{color:#7fa3bf}.l .s{color:#35607f}
+.rows>div{background:var(--surf);padding:3.4vh 2.4vw}.rows>div:nth-child(2){background:var(--bg);box-shadow:inset 0 0 0 9999px rgba(147,166,179,.1)}
+.rows p{max-width:none;font-family:Georgia,serif;font-size:clamp(1.5rem,3.1vw,2.8rem);letter-spacing:-.02em;line-height:1.1}
+ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:2.4vh}
+li{font-family:Georgia,serif;font-size:clamp(1.5rem,3vw,2.6rem);letter-spacing:-.02em;line-height:1.1;max-width:24em}
+.mark{font-family:Georgia,serif;font-size:clamp(3rem,13vw,12rem);letter-spacing:-.05em;line-height:.9;color:var(--acc);margin-top:3vh}
+.ctl{display:flex;gap:1.2rem;align-items:center;font-size:1rem;color:var(--mut)}
+input{flex:1;accent-color:var(--acc);height:28px}output{min-width:15ch;color:var(--ink);font-variant-numeric:tabular-nums}
+#n{position:fixed;right:2vw;bottom:2vh;color:#93a6b3;font-size:.85rem}
+.in{animation:up .7s var(--out) both}.in:nth-child(2){animation-delay:60ms}
+@keyframes up{from{opacity:0;transform:translateY(14px)}}
+@media(max-width:800px){.g,.g.w,.two{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){.in{animation:none}}
+</style></head><body><main>
+
+<section class="d"><div class="g"><div>
+<h1 class="in">¿Cuánto del riesgo de los bancos viene del mercado?</h1>
+<p class="mut in">Una regresión lineal con datos reales de 2010 a 2025. Mueve el control: cada mes, dos columnas.</p></div>
+<div><svg id="iso" viewBox="0 0 520 430" role="img" aria-label="Dos columnas isométricas que suben y bajan mes a mes: SPY y XLF"></svg>
+<div class="ctl"><input id="sl" type="range" min="0" value="0" aria-label="Mes"><output id="rd"></output></div></div></div></section>
+
+<section class="l"><h2>Dos series, mismo periodo</h2><div class="two">
+<div><div class="big">SPY</div><p>Un ETF que replica al S&amp;P 500, las 500 empresas más grandes de EE.UU. Es nuestro mercado.</p></div>
+<div><div class="big s">XLF</div><p>Un ETF con los grandes bancos de EE.UU. Es el sector que queremos medir.</p></div></div>
+<p class="mut"><span id="n1"></span> meses, de enero de 2010 a diciembre de 2025. Fuente: Yahoo Finance, precios ajustados.</p></section>
+
+<section class="d"><div class="g"><div><h2>Correlación</h2><div class="big" id="r1"></div>
+<p>Coeficiente de Pearson entre SPY y XLF. <span id="t1"></span></p></div><canvas id="c1"></canvas></div></section>
+
+<section class="l"><div class="g w"><canvas id="c2"></canvas><div><h2>Dependencia</h2>
+<p>Por cada dólar que sube el SPY, el XLF cambia en <b id="b1"></b> dólares.</p>
+<p>El SPY explica <b id="r2"></b> de la variación del XLF. Eso es el R². <span id="sg"></span></p></div></div></section>
+
+<section class="d"><h2>Autocorrelación</h2><canvas id="c3"></canvas><div class="g"><div class="big" id="dw1"></div>
+<p>Durbin-Watson de los residuos. Con 2 no hay autocorrelación; cerca de 0, cada error se parece al del mes anterior. <span id="t3"></span></p></div></section>
+
+<section class="l"><h2>Correlación espuria</h2>
+<p>Comparar series que arrastran una tendencia puede engañar, para bien o para mal. Repetimos el modelo con <b>cambios porcentuales mensuales</b>.</p>
+<div class="two"><div><p class="mut">En niveles</p><div class="big" id="e1"></div><p id="e1b"></p></div>
+<div><p class="mut">En cambios mensuales</p><div class="big s" id="e2"></div><p id="e2b"></p></div></div></section>
+
+<section class="d"><h2>Causalidad</h2><div class="rows">
+<div><p>El mercado mueve a los bancos: reaccionan a la economía.</p></div>
+<div><p>Los bancos mueven al mercado: pesan en el índice, así que parte de la relación es mecánica.</p></div>
+<div><p>Las tasas y la economía mueven a ambos a la vez.</p></div></div>
+<p class="mut">La regresión mide asociación. No elige entre las tres.</p></section>
+
+<section class="l"><h2>Conclusiones</h2><ul><li id="k1"></li><li id="k2"></li>
+<li>La beta mide asociación, no causalidad: SPY incluye a los bancos.</li></ul>
+<div class="mark">SPY y XLF</div></section>
+</main><div id="n"></div>
+
+<script src="results.js"></script>
+<script>
+const R=window.RESULTS,N=R.niveles,C=R.cambios,$=i=>document.getElementById(i),f=(v,d=2)=>v.toFixed(d);
+const pct=v=>f(v*100,0)+"%",fuerza=r=>Math.abs(r)>.7?"fuerte":Math.abs(r)>.4?"moderada":"débil",dir=r=>r<0?"negativa":"positiva";
+function plot(id,xs,ys,o={}){const c=$(id),cs=getComputedStyle(c),v=n=>cs.getPropertyValue(n).trim(),k=devicePixelRatio||1,w=c.clientWidth,h=c.clientHeight;
+c.width=w*k;c.height=h*k;const g=c.getContext("2d");g.scale(k,k);const m=52,t=18;
+const xr=o.xs?[0,xs.length-1]:[Math.min(...xs),Math.max(...xs)],yr=[Math.min(...ys),Math.max(...ys)];
+const X=a=>m+(a-xr[0])/(xr[1]-xr[0]||1)*(w-m-18),Y=a=>h-m-(a-yr[0])/(yr[1]-yr[0]||1)*(h-m-t);
+g.strokeStyle=g.fillStyle=v("--mut");g.font="14px sans-serif";g.lineWidth=1;g.beginPath();g.moveTo(m,t);g.lineTo(m,h-m);g.lineTo(w-10,h-m);g.stroke();
+g.fillText(f(yr[1],1),6,t+4);g.fillText(f(yr[0],1),6,h-m);g.fillText(o.lx||"",m,h-14);
+if(o.zero&&yr[0]<0&&yr[1]>0){g.beginPath();g.moveTo(m,Y(0));g.lineTo(w-10,Y(0));g.stroke()}
+g.strokeStyle=g.fillStyle=v("--acc");
+if(o.line){g.lineWidth=3;g.beginPath();xs.forEach((x,i)=>{const px=X(i),py=Y(ys[i]);i?g.lineTo(px,py):g.moveTo(px,py)});g.stroke()}
+else{xs.forEach((x,i)=>{g.beginPath();g.arc(X(x),Y(ys[i]),5,0,7);g.fill()});
+if(o.fit){g.strokeStyle=v("--ink");g.lineWidth=3;const[a,b]=xr;g.beginPath();g.moveTo(X(a),Y(o.fit[0]+o.fit[1]*a));g.lineTo(X(b),Y(o.fit[0]+o.fit[1]*b));g.stroke()}}}
+function draw(){plot("c1",N.x,N.y,{lx:"SPY, mercado (X)  →  XLF, bancos (Y)"});
+plot("c2",N.x,N.y,{fit:[N.b0,N.b1],lx:"SPY, mercado (X)  →  XLF, bancos (Y)"});
+plot("c3",R.fechas.map((_,i)=>i),N.res,{xs:1,line:1,zero:1,lx:"Residuos mes a mes, 2010-2025"})}
+$("n1").textContent=N.n;$("r1").textContent="r = "+f(N.r);$("t1").textContent=`Relación ${dir(N.r)} ${fuerza(N.r)}.`+(N.p>.05?` No es significativa (p = ${f(N.p)}).`:"");$("sg").textContent=N.pb1>.05?`Con p = ${f(N.pb1)}, este modelo no es significativo.`:"";
+$("b1").textContent=f(N.b1);$("r2").textContent=pct(N.r2);$("dw1").textContent=f(N.dw);
+$("t3").textContent=N.dw<1.5?"Aquí es bajo: los errores se arrastran de un mes a otro y el modelo en niveles es poco confiable.":"Aquí no es tan bajo.";
+$("e1").textContent=pct(N.r2);$("e1b").textContent=`R² · Durbin-Watson ${f(N.dw)}`;$("e2").textContent=pct(C.r2);$("e2b").textContent=`R² · beta ${f(C.b1)} · Durbin-Watson ${f(C.dw)}`;
+$("k1").textContent=`Beta = ${f(C.b1)}: cuando el mercado se mueve 1% en un mes, los bancos se mueven en promedio ${f(Math.abs(C.b1))}%.`;
+$("k2").textContent=`El mercado explica ${pct(C.r2)} del riesgo de los bancos; el ${pct(1-C.r2)} restante es riesgo propio del sector.`;
+
+/* Figura isométrica: dos columnas, una por serie, alturas = datos reales */
+const K=[1.3,.75],P=(x,y,z)=>[(x-y)*K[0]+170,(x+y)*K[1]-z+150].map(a=>a.toFixed(1)).join(",");
+const pr=(x,y,dx,dy,z0,z1,c)=>`<polygon points="${P(x,y,z1)} ${P(x+dx,y,z1)} ${P(x+dx,y+dy,z1)} ${P(x,y+dy,z1)}" fill="${c[0]}"/>`+
+`<polygon points="${P(x,y+dy,z0)} ${P(x+dx,y+dy,z0)} ${P(x+dx,y+dy,z1)} ${P(x,y+dy,z1)}" fill="${c[1]}"/>`+
+`<polygon points="${P(x+dx,y,z0)} ${P(x+dx,y+dy,z0)} ${P(x+dx,y+dy,z1)} ${P(x+dx,y,z1)}" fill="${c[2]}"/>`;
+const CP=["#2b3e4c","#1f2f3b","#16232d"],CA=["#f7c860","#e0a100","#a87600"],CB=["#a9c4d8","#7fa3bf","#55778f"];
+let ticks="";for(let x=10;x<=210;x+=20)ticks+=`<path d="M${P(x,110,10)}L${P(x,110,x%40==10?19:15)}" stroke="#93a6b3" stroke-width="1.4"/>`;
+const gA=$("iso");gA.innerHTML=pr(0,0,220,110,0,10,CP)+ticks+'<g id="a"></g><g id="b"></g>';
+const mm=a=>[Math.min(...a),Math.max(...a)],nx=mm(N.x),ny=mm(N.y),H=(v,r)=>24+(v-r[0])/(r[1]-r[0]||1)*140;
+let cur=[24,24],tgt=[24,24],sl=$("sl");sl.max=N.x.length-1;
+function show(i){tgt=[H(N.x[i],nx),H(N.y[i],ny)];$("rd").textContent=`${R.fechas[i]}  SPY ${f(N.x[i],1)}  XLF ${f(N.y[i],1)}`}
+function tick(){cur=cur.map((c,j)=>c+(tgt[j]-c)*.14);$("a").innerHTML=pr(40,30,50,50,10,10+cur[0],CA);$("b").innerHTML=pr(130,30,50,50,10,10+cur[1],CB);requestAnimationFrame(tick)}
+let auto=null;const stop=()=>{clearInterval(auto);auto=null};
+sl.oninput=()=>{stop();show(+sl.value)};show(0);tick();
+if(!matchMedia("(prefers-reduced-motion:reduce)").matches)auto=setInterval(()=>{if(+sl.value>=+sl.max)return stop();sl.value=+sl.value+1;show(+sl.value)},90);
+
+const S=[...document.querySelectorAll("section")],M=document.querySelector("main");let i=0;
+const go=d=>{i=Math.max(0,Math.min(S.length-1,i+d));M.scrollTo({top:S[i].offsetTop,behavior:"instant"})};
+const lab=()=>$("n").textContent=`${i+1} / ${S.length}`;
+addEventListener("keydown",e=>{if(e.target===sl&&e.key.startsWith("Arrow")&&e.key!=="ArrowUp"&&e.key!=="ArrowDown")return;
+if(["ArrowRight","ArrowDown","PageDown"," "].includes(e.key)){e.preventDefault();go(1)}
+if(["ArrowLeft","ArrowUp","PageUp"].includes(e.key)){e.preventDefault();go(-1)}if(e.key==="f")document.documentElement.requestFullscreen?.()});
+M.addEventListener("scroll",()=>{i=Math.round(M.scrollTop/innerHeight);lab()});
+addEventListener("resize",draw);draw();lab();
+</script></body></html>
